@@ -5,6 +5,19 @@ const AST_FORMAT = "prettier-plugin-less-ast";
 
 type Print = (path: AstPath) => Doc;
 
+function findEndBracketNodeIndex(nodes: any[], { startingIndex = 0 }): number {
+  let index = startingIndex;
+  for (const node of nodes) {
+    if (node.value && node.value.endsWith("]")) {
+      return index;
+    }
+
+    index++;
+  }
+
+  return -1;
+}
+
 function prettierPluginLessPrinter(
   path: AstPath,
   options: ParserOptions,
@@ -12,7 +25,7 @@ function prettierPluginLessPrinter(
 ): Doc {
   const node = path.node;
 
-  if (node.type === "value-comma_group" && node.groups.length === 2) {
+  if (node.type === "value-comma_group" && node.groups.length >= 2) {
     const [firstNode, secondNode] = node.groups;
 
     if (
@@ -20,21 +33,24 @@ function prettierPluginLessPrinter(
       secondNode.type === "value-word" &&
       secondNode.value.startsWith("[")
     ) {
-      /*
-       * Unfortunately we can't just call `print(firstNode), print(SecondNode)`... Something else
-       * is going on too...
-       */
-      const printedNodes = path.map(print, "groups");
+      const endBracketNodeIndex = findEndBracketNodeIndex(node.groups, {
+        startingIndex: 1,
+      });
 
-      return {
-        type: "group",
-        contents: {
-          type: "fill",
-          parts: printedNodes,
-        },
-        break: false,
-        expandedStates: [],
-      };
+      if (endBracketNodeIndex !== -1) {
+        const printedNodes = path.map(print, "groups");
+        const parts = printedNodes.slice(0, endBracketNodeIndex + 1);
+
+        return {
+          type: "group",
+          contents: {
+            type: "fill",
+            parts,
+          },
+          break: false,
+          expandedStates: [],
+        };
+      }
     }
   }
 
