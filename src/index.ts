@@ -1,11 +1,15 @@
 import { parsers, printers } from "prettier/plugins/postcss";
 import { AstPath, Doc, ParserOptions, Plugin, Printer } from "prettier";
+import { AnyNode, ValueNode } from "./types/nodes";
 
 const AST_FORMAT = "prettier-plugin-less-ast";
 
-type Print = (path: AstPath) => Doc;
+type Print = (path: AstPath<AnyNode>) => Doc;
 
-function findEndBracketNodeIndex(nodes: any[], { startingIndex = 0 }): number {
+function findEndBracketNodeIndex(
+  nodes: ValueNode[],
+  { startingIndex = 0 }
+): number {
   let index = startingIndex;
   for (const node of nodes) {
     if (node.value && node.value.endsWith("]")) {
@@ -19,7 +23,7 @@ function findEndBracketNodeIndex(nodes: any[], { startingIndex = 0 }): number {
 }
 
 function prettierPluginLessPrinter(
-  path: AstPath,
+  path: AstPath<AnyNode>,
   options: ParserOptions,
   print: Print
 ): Doc {
