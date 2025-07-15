@@ -11,11 +11,12 @@ describe("prettierPluginLess", () => {
   };
 
   test("returns code without adding space between mixin and []", async () => {
-    const code = `
-    .my-class {
-      font-size: .mixin-double(16px)[];
-    }
-    `;
+    const code = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px)[];",
+      "}",
+      "",
+    ].join("\n");
 
     const formattedCode = await formatWithPlugin(code);
     expect(formattedCode).toBe(code);
