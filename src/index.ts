@@ -8,7 +8,7 @@ type Print = (path: AstPath<AnyNode>) => Doc;
 
 function findEndBracketNodeIndex(
   nodes: ValueNode[],
-  { startingIndex = 0 }
+  { startingIndex = 0 },
 ): number {
   let index = startingIndex;
   for (const node of nodes) {
@@ -25,7 +25,7 @@ function findEndBracketNodeIndex(
 function prettierPluginLessPrinter(
   path: AstPath<AnyNode>,
   options: ParserOptions,
-  print: Print
+  print: Print,
 ): Doc {
   const node = path.node;
 
