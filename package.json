@@ -5,8 +5,7 @@
   "main": "lib/src/index.js",
   "scripts": {
     "test": "vitest run",
-    "build": "tsc",
-    "test:plugin": "prettier --plugin ./lib/src/index.js test/example.less"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
