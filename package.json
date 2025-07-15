@@ -1,12 +1,12 @@
 {
-  "name": "prettier-less",
+  "name": "prettier-plugin-less",
   "version": "1.0.0",
   "description": "",
   "main": "lib/src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
     "build": "tsc",
-    "test-plugin": "prettier --plugin ./lib/src/index.js test/example.less"
+    "test:plugin": "prettier --plugin ./lib/src/index.js test/example.less"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,7 @@
   "devDependencies": {
     "@types/node": "^24.0.14",
     "prettier": "^3.6.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }
