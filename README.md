@@ -1,12 +1,13 @@
 # prettier-plugin-less
 
-A plugin that makes some opinionated changes to Prettier’s formatting of Less files.
+A Prettier plugin that just removes the space between a
+[mixin function](https://lesscss.org/features/#mixins-feature-mixins-as-functions-feature) and its
+property selector (`[...]`). Yup, that’s it.
 
-### Features
+### Example
 
-- Tries really hard to prevent any spaces between a mixin and a `[...]`:
-  ```less
-  .my-class {
-    font-size: .mixin-double(32px)[];
-  }
-  ```
+```less
+.my-class {
+  font-size: .mixin-double(16px)[];
+}
+```
