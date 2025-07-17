@@ -1,10 +1,11 @@
 import { parsers, printers } from "prettier/plugins/postcss";
-import { AstPath, Doc, ParserOptions, Plugin, Printer } from "prettier";
+import { AstPath, ParserOptions, Plugin, Printer } from "prettier";
 import { AnyNode, ValueNode } from "./types/nodes";
+import { builders } from "prettier/doc";
 
 const AST_FORMAT = "prettier-plugin-less-ast";
 
-type Print = (path: AstPath<AnyNode>) => Doc;
+type Print = (path: AstPath<AnyNode>) => builders.Doc;
 
 function findEndBracketNodeIndex(
   nodes: ValueNode[],
@@ -26,7 +27,9 @@ function prettierPluginLessPrinter(
   path: AstPath<AnyNode>,
   options: ParserOptions,
   print: Print,
-): Doc {
+): builders.Doc {
+  const result = printers.postcss.print(path, options, print);
+
   const node = path.node;
 
   if (node.type === "value-comma_group" && node.groups.length >= 2) {
@@ -35,30 +38,26 @@ function prettierPluginLessPrinter(
     if (
       firstNode.type === "value-func" &&
       secondNode.type === "value-word" &&
-      secondNode.value.startsWith("[")
+      secondNode.value.startsWith("[") &&
+      isCommand(result, "group") &&
+      isCommand(result.contents, "indent") &&
+      isCommand(result.contents.contents, "fill")
     ) {
-      const endBracketNodeIndex = findEndBracketNodeIndex(node.groups, {
-        startingIndex: 1,
-      });
-
-      if (endBracketNodeIndex !== -1) {
-        const printedNodes = path.map(print, "groups");
-        const parts = printedNodes.slice(0, endBracketNodeIndex + 1);
-
-        return {
-          type: "group",
-          contents: {
-            type: "fill",
-            parts,
-          },
-          break: false,
-          expandedStates: [],
-        };
-      }
+      const parts = result.contents.contents.parts;
+      /* Remove the spaces between ".mixin()" and "[]" */
+      result.contents.contents.parts = parts.filter(
+        (part) => !isCommand(part, "line"),
+      );
     }
   }
+  return result;
+}
 
-  return printers.postcss.print(path, options, print);
+function isCommand<TType extends builders.DocCommand["type"]>(
+  doc: builders.Doc,
+  type: TType,
+): doc is Extract<builders.DocCommand, { type: TType }> {
+  return typeof doc === "object" && !Array.isArray(doc) && doc.type === type;
 }
 
 const prettierPluginLess: Plugin = {
