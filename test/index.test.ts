@@ -160,17 +160,17 @@ describe("prettierPluginLess", () => {
     expect(formattedCode).toBe(expectedCode);
   });
 
-  test("returns code with spaces between mixin and [ ... ] removed with multiple variables", async () => {
+  test("returns code with spaces between mixin and nested [ ... ] removed", async () => {
     const code = [
       ".my-class {",
-      "  font-size: .mixin-double(16px) [@variableone, @variabletwo];",
+      "  font-size: .mixin-double(16px) [@variableone [ variabletwo ]];",
       "}",
       "",
     ].join("\n");
 
     const expectedCode = [
       ".my-class {",
-      "  font-size: .mixin-really-long-name-for-a-double(16px)[@reallyreallyreallyreallyreallylongvariablename];",
+      "  font-size: .mixin-double(16px)[@variableone[variabletwo]];",
       "}",
       "",
     ].join("\n");
