@@ -1,5 +1,5 @@
 import * as prettier from "prettier";
-import prettierPluginLess from "../src/index";
+import * as prettierPluginLess from "../src/index";
 import { describe, expect, test } from "vitest";
 
 describe("prettierPluginLess", () => {

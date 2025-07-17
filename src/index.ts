@@ -45,8 +45,8 @@ function prettierPluginLessPrinter(
     ) {
       const parts = result.contents.contents.parts;
       /* Remove the spaces between ".mixin()" and "[]" */
-      result.contents.contents.parts = parts.filter(
-        (part) => !isCommand(part, "line"),
+      result.contents.contents.parts = parts.map((part) =>
+        isCommand(part, "line") ? builders.softline : part,
       );
     }
   }
@@ -75,4 +75,4 @@ const prettierPluginLess: Plugin = {
   },
 };
 
-export default prettierPluginLess;
+module.exports = prettierPluginLess;
