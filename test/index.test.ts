@@ -72,7 +72,7 @@ describe("prettierPluginLess", () => {
     expect(formattedCode).toBe(expectedCode);
   });
 
-  test("returns code without adding space between mixing and [@return]", async () => {
+  test("returns code without adding space between mixin and [@return]", async () => {
     const code = [
       ".my-class {",
       "  font-size: .mixin-double(16px)[@return];",
@@ -82,5 +82,100 @@ describe("prettierPluginLess", () => {
 
     const formattedCode = await formatWithPlugin(code);
     expect(formattedCode).toBe(code);
+  });
+
+  test("returns code with space between mixin, [@return] removed", async () => {
+    const code = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px) [@return];",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px)[@return];",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("returns code with spaces between mixin, [ ... ] and @return removed", async () => {
+    const code = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px) [ @return ];",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px)[@return];",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("returns code with spaces between mixin, [ ... ] and long variable removed", async () => {
+    const code = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px) [ @reallyreallyreallyreallyreallylongvariablename ];",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px)[@reallyreallyreallyreallyreallylongvariablename];",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("returns code with spaces between long mixin, [ ... ] and long variable removed", async () => {
+    const code = [
+      ".my-class {",
+      "  font-size: .mixin-really-long-name-for-a-double(16px) [ @reallyreallyreallyreallyreallylongvariablename ];",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".my-class {",
+      "  font-size: .mixin-really-long-name-for-a-double(16px)[@reallyreallyreallyreallyreallylongvariablename];",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("returns code with spaces between mixin and [ ... ] removed with multiple variables", async () => {
+    const code = [
+      ".my-class {",
+      "  font-size: .mixin-double(16px) [@variableone, @variabletwo];",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".my-class {",
+      "  font-size: .mixin-really-long-name-for-a-double(16px)[@reallyreallyreallyreallyreallylongvariablename];",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
   });
 });
