@@ -1,7 +1,6 @@
 /*
  * Non comprehensive typing of the CSS AST provided by Prettier.
- * These types are added to as needed, and changed as I observe more
- * about the different nodes.
+ * These types are added to as needed, and based purely on my observations while debugging outputs.
  */
 
 export type AnyNode = ValueCommaGroupNode | ValueNode;
