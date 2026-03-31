@@ -160,6 +160,98 @@ describe("prettierPluginLess", () => {
     expect(formattedCode).toBe(expectedCode);
   });
 
+  test("normalizes 4-space indentation inside mixin detached ruleset argument", async () => {
+    const code = [
+      ".mixin-media-hover({",
+      "    &:hover {",
+      "        --example: 0.75;",
+      "    }",
+      "});",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".mixin-media-hover({",
+      "  &:hover {",
+      "    --example: 0.75;",
+      "  }",
+      "});",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("preserves correct 2-space indentation inside mixin detached ruleset argument", async () => {
+    const code = [
+      ".mixin-media-hover({",
+      "  &:hover {",
+      "    --example: 0.75;",
+      "  }",
+      "});",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(code);
+  });
+
+  test("keeps when and condition on same line when selector fits on one line", async () => {
+    const code = [
+      ".mixin(@a) when (lightness(@a) >= 50%) {",
+      "  font-size: 12px;",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(code);
+  });
+
+  test("joins when and condition when split across lines but fits on one line", async () => {
+    const code = [
+      ".mixin(@a)",
+      "\twhen",
+      "\t(lightness(@a) >= 50%) {",
+      "\tfont-size: 12px;",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".mixin(@a) when (lightness(@a) >= 50%) {",
+      "  font-size: 12px;",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("keeps when and condition together and adds extra body indent when selector wraps", async () => {
+    const code = [
+      ".grid-column-count(@width-or-column-count)",
+      "\twhen",
+      "\t(ispixel(@width-or-column-count)) {",
+      "\t@return: (@width-or-column-count / @grid-column-base-width);",
+      "}",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".grid-column-count(@width-or-column-count)",
+      "  when (ispixel(@width-or-column-count)) {",
+      "    @return: (@width-or-column-count / @grid-column-base-width);",
+      "}",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
   test("returns code with spaces between mixin and nested [ ... ] removed", async () => {
     const code = [
       ".my-class {",
