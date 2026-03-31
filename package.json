@@ -1,6 +1,6 @@
 {
   "name": "prettier-plugin-less",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A plugin that removes the space between a mixin function and the property accessor. Yup, that’s it.",
   "main": "lib/src/index.js",
   "files": [
