@@ -6,8 +6,18 @@ property accessor (`[...]`). Yup, that’s it.
 
 ### Example
 
+**Without plugin**
+
+```css
+.my-class {
+  font-size: .rem(16px) [];
+}
+```
+
+**With plugin**
+
 ```less
 .my-class {
-  font-size: .mixin-double(16px)[];
+  font-size: .rem(16px)[];
 }
 ```
