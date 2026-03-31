@@ -8,7 +8,7 @@ property accessor (`[...]`). Yup, that’s it.
 
 **Without plugin**
 
-```css
+```less
 .my-class {
   font-size: .rem(16px) [];
 }
