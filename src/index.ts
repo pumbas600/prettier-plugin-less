@@ -46,7 +46,7 @@ function prettierPluginLessPrinter(
       const parts = result.contents.contents.parts;
       /* Remove the spaces between the mixin function and "[]". */
       result.contents.contents.parts = parts.map((part) =>
-        isCommand(part, "line") ? builders.softline : part,
+        isCommand(part, "line") ? "" : part,
       );
     }
   }
