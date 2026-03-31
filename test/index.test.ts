@@ -3,10 +3,14 @@ import * as prettierPluginLess from "../src/index";
 import { describe, expect, test } from "vitest";
 
 describe("prettierPluginLess", () => {
-  const formatWithPlugin = async (code: string): Promise<string> => {
+  const formatWithPlugin = async (
+    code: string,
+    options: prettier.Options = {},
+  ): Promise<string> => {
     return await prettier.format(code, {
       parser: "less",
       plugins: [prettierPluginLess],
+      ...options,
     });
   };
 
@@ -180,6 +184,52 @@ describe("prettierPluginLess", () => {
     ].join("\n");
 
     const formattedCode = await formatWithPlugin(code);
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("converts spaces to tabs inside mixin detached ruleset argument when useTabs is true", async () => {
+    const code = [
+      ".mixin-media-hover({",
+      "    &:hover {",
+      "        --transition-duration: var(--timing-duration-in);",
+      "    }",
+      "});",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".mixin-media-hover({",
+      "\t&:hover {",
+      "\t\t--transition-duration: var(--timing-duration-in);",
+      "\t}",
+      "});",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code, { useTabs: true });
+    expect(formattedCode).toBe(expectedCode);
+  });
+
+  test("normalizes 2-space indentation inside mixin detached ruleset argument to 4 spaces when tabWidth is 4", async () => {
+    const code = [
+      ".mixin-media-hover({",
+      "  &:hover {",
+      "    --transition-duration: var(--timing-duration-in);",
+      "  }",
+      "});",
+      "",
+    ].join("\n");
+
+    const expectedCode = [
+      ".mixin-media-hover({",
+      "    &:hover {",
+      "        --transition-duration: var(--timing-duration-in);",
+      "    }",
+      "});",
+      "",
+    ].join("\n");
+
+    const formattedCode = await formatWithPlugin(code, { tabWidth: 4 });
     expect(formattedCode).toBe(expectedCode);
   });
 

@@ -20,6 +20,7 @@ type Print = (path: AstPath<AnyNode>) => builders.Doc;
 function normalizeDetachedRulesetInValue(
   classValue: string,
   tabWidth: number,
+  useTabs: boolean,
 ): string {
   const openIdx = classValue.indexOf("({");
   if (openIdx === -1) return classValue;
@@ -43,15 +44,19 @@ function normalizeDetachedRulesetInValue(
   if (!unitMatch) return classValue;
 
   const unit = unitMatch[1].length;
+  const contentUsesTabs = firstIndented.startsWith("\t");
 
-  /* Already using the correct indentation. */
-  if (unit === tabWidth && !firstIndented.startsWith("\t")) return classValue;
+  /* Already using the correct indentation style and size. */
+  if (contentUsesTabs === useTabs && (useTabs || unit === tabWidth))
+    return classValue;
 
   const normalized = lines.map((line) => {
     if (!line.trim()) return "";
     const indentLen = line.match(/^([ \t]*)/)?.[1]?.length ?? 0;
     const level = Math.round(indentLen / unit);
-    return " ".repeat(level * tabWidth) + line.trimStart();
+    return (
+      (useTabs ? "\t" : " ".repeat(tabWidth)).repeat(level) + line.trimStart()
+    );
   });
 
   return (
@@ -159,6 +164,7 @@ function prettierPluginLessPrinter(
       classNode.value = normalizeDetachedRulesetInValue(
         classNode.value,
         options.tabWidth,
+        options.useTabs ?? false,
       );
     }
   }
